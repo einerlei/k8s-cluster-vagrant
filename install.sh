@@ -104,7 +104,7 @@ if [[ $(hostname) == "node1" ]]; then
   cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
   chown vagrant:vagrant -R /home/vagrant/.kube
 
-  kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+  su -l vagrant -c 'kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml'
 else
   . /vagrant/join_command
 fi
