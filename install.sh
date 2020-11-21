@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-K8S_TOKEN='0yh0a6.s6hu1y093quocwlp'
-
 # (Install Docker CE)
 ## Set up the repository
 ### Install required packages
@@ -17,9 +15,9 @@ sudo yum-config-manager --add-repo \
 
 # Install Docker CE
 sudo yum update -y && sudo yum install -y \
-  containerd.io-1.2.13 \
-  docker-ce-19.03.11 \
-  docker-ce-cli-19.03.11
+  containerd.io \
+  docker-ce \
+  docker-ce-cli
 
 ## Create /etc/docker
 sudo mkdir /etc/docker
@@ -97,15 +95,16 @@ sudo setenforce 0
 #sudo sed -i '/swap/d' /etc/fstab
 sudo swapoff -a
 
-
 ### Run Kubernetes on master or join on client
 if [[ $(hostname) == "node1" ]]; then
-  kubeadm init \
-    --apiserver-advertise-address=`hostname -I | awk '{ print $2 }'` \
-    --pod-network-cidr=10.244.0.0/16 \
-    --ignore-preflight-errors=NumCPU \
-    | tee /tmp/kube_output
+  kubeadm init --apiserver-advertise-address=`hostname -I | awk '{ print $2 }'` --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=NumCPU | tee /tmp/kube_output
   cat /tmp/kube_output | tail -2 > /vagrant/join_command
+
+  mkdir -p /home/vagrant/.kube
+  cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
+  chown vagrant:vagrant -R /home/vagrant/.kube
+
+  kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 else
   . /vagrant/join_command
 fi
