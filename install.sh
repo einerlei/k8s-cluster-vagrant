@@ -104,7 +104,6 @@ if [[ $(hostname) == "node1" ]]; then
     --apiserver-advertise-address=`hostname -I | awk '{ print $2 }'` \
     --pod-network-cidr=10.244.0.0/16 \
     --ignore-preflight-errors=NumCPU \
-    --feature-gates CoreDNS=true \
     | tee /tmp/kube_output
   cat /tmp/kube_output | tail -2 > /vagrant/join_command
 else
